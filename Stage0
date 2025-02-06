@@ -1,1 +1,17 @@
-
+my_profile = {
+    "Name": "Edeh Abigael",
+    "Slack Username": "Abby",
+    "Email": "abigaeledeh17@gmail.com",
+    "Hobby": "Crafting and reading",
+    "Country": "Nigeria",
+    "Discipline": "Molecular Nutrition",
+    "Preferred Programming Language": "Python"
+}
+print("my_profile:")
+print(f"Name: {my_profile['Name']}")
+print(f"Slack Username: {my_profile['Slack Username']}")
+print(f"Email: {my_profile['Email']}")
+print(f"Hobby: {my_profile['Hobby']}")
+print(f"Country: {my_profile['Country']}")
+print(f"Discipline: {my_profile['Discipline']}")
+print(f"Preferred Programming Language: {my_profile['Preferred Programming Language']}")
