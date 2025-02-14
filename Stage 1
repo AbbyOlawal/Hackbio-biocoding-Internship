@@ -139,3 +139,49 @@ plt.show()
 
 
 
+import numpy as np
+import random
+def time_to_reach_80_percent_capacity_mosquito(initial_population, carrying_capacity, growth_rate, time_steps, max_lag_phase, max_exp_phase):
+    """
+    Simulates logistic population growth for mosquitoes and returns the time when the population reaches 80% of the carrying capacity.
+    Parameters:
+    - initial_population: Initial population size of mosquitoes
+    - carrying_capacity: Maximum population size the environment can sustain (carrying capacity)
+    - growth_rate: Intrinsic rate of population growth
+    - time_steps: Total number of time steps (e.g., days) to simulate
+    - max_lag_phase: Maximum random length (in time units) for the lag phase
+    - max_exp_phase: Maximum random length (in time units) for the exponential phase
+    Returns:
+    - time_to_80_percent: Time step when population first reaches or exceeds 80% of carrying capacity
+    """
+    lag_phase_length = random.randint(0, max_lag_phase) 
+    exp_phase_length = random.randint(0, max_exp_phase)  
+    population = np.zeros(time_steps)
+    population[0] = initial_population
+    for t in range(1, time_steps):
+        if t < lag_phase_length:
+            population[t] = population[0] 
+        elif t < lag_phase_length + exp_phase_length:
+            growth_rate_exp = growth_rate * 1.5 
+            population[t] = population[t-1] + growth_rate_exp * population[t-1] * (1 - population[t-1] / carrying_capacity)
+        else:
+            population[t] = population[t-1] + growth_rate * population[t-1] * (1 - population[t-1] / carrying_capacity)
+        if population[t] >= 0.8 * carrying_capacity:
+            return t 
+    return None 
+initial_population = 50 
+carrying_capacity = 1000 
+growth_rate = 0.1 
+time_steps = 100 
+max_lag_phase = 20  
+max_exp_phase = 30  
+time_to_80_percent = time_to_reach_80_percent_capacity_mosquito(initial_population, carrying_capacity, growth_rate, time_steps, max_lag_phase, max_exp_phase)
+if time_to_80_percent is not None:
+    print(f"Time to reach 80% of the carrying capacity: {time_to_80_percent} time steps")
+else:
+    print("Population did not reach 80% of the carrying capacity within the given time steps.")
+
+
+
+
+
