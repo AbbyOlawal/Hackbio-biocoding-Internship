@@ -182,6 +182,17 @@ else:
     print("Population did not reach 80% of the carrying capacity within the given time steps.")
 
 
+def hamming_distance(str1, str2):
+    max_length = max(len(str1), len(str2))
+    str1 = str1.ljust(max_length, '*')
+    str2 = str2.ljust(max_length, '*')
+    distance = sum(1 for a, b in zip(str1, str2) if a != b)
+    return distance
+# Slack username and Twitter/X handle
+slack_username = "@Abby"
+twitter_handle = "@EdehAbigael5"
+distance = hamming_distance(slack_username, twitter_handle)
+print(f"Hamming distance: {distance}")
 
 
 
