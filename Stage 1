@@ -34,7 +34,51 @@ print(f"Translated Protein Sequence: {protein}")
 
 
 
-
+import numpy as np
+import matplotlib.pyplot as plt
+import random
+def simulate_logistic_growth(initial_population, carrying_capacity, growth_rate, time_steps, max_lag_phase, max_exp_phase):
+    """
+    Parameters:
+    - initial_population: Initial population size of mosquitoes
+    - carrying_capacity: Maximum population size the environment can sustain
+    - growth_rate: Intrinsic rate of population growth
+    - time_steps: Total number of time steps (e.g., days) to simulate
+    - max_lag_phase: Maximum random length (in time units) for the lag phase
+    - max_exp_phase: Maximum random length (in time units) for the exponential phase
+    Returns:
+    - time: Time points array
+    - population: Simulated population size at each time point
+    """
+    lag_phase_length = random.randint(0, max_lag_phase) 
+    exp_phase_length = random.randint(0, max_exp_phase)  
+    population = np.zeros(time_steps)
+    population[0] = initial_population
+    for t in range(1, time_steps):
+        if t < lag_phase_length:
+            population[t] = population[0]  
+        elif t < lag_phase_length + exp_phase_length:
+            growth_rate_exp = growth_rate * 1.5  
+            population[t] = population[t-1] + growth_rate_exp * population[t-1] * (1 - population[t-1]/carrying_capacity)
+        else:
+            population[t] = population[t-1] + growth_rate * population[t-1] * (1 - population[t-1]/carrying_capacity)
+    return population
+initial_population = 50
+carrying_capacity = 1000
+growth_rate = 0.1  # Intrinsic growth rate
+time_steps = 100  # Simulate over 100 time units (e.g., days)
+max_lag_phase = 20  # Max random length for lag phase
+max_exp_phase = 30  # Max random length for exponential phase
+population = simulate_logistic_growth(initial_population, carrying_capacity, growth_rate, time_steps, max_lag_phase, max_exp_phase)
+time = np.arange(0, time_steps)
+plt.figure(figsize=(10, 6))
+plt.plot(time, population, label="Mosquito Population", color="b")
+plt.title("Simulated Logistic Population Growth of Mosquitoes")
+plt.xlabel("Time (days)")
+plt.ylabel("Population Size")
+plt.grid(True)
+plt.legend()
+plt.show() 
 
 
 
