@@ -65,10 +65,10 @@ def simulate_logistic_growth(initial_population, carrying_capacity, growth_rate,
     return population
 initial_population = 50
 carrying_capacity = 1000
-growth_rate = 0.1  # Intrinsic growth rate
-time_steps = 100  # Simulate over 100 time units (e.g., days)
-max_lag_phase = 20  # Max random length for lag phase
-max_exp_phase = 30  # Max random length for exponential phase
+growth_rate = 0.1  
+time_steps = 100  
+max_lag_phase = 20  
+max_exp_phase = 30  
 population = simulate_logistic_growth(initial_population, carrying_capacity, growth_rate, time_steps, max_lag_phase, max_exp_phase)
 time = np.arange(0, time_steps)
 plt.figure(figsize=(10, 6))
