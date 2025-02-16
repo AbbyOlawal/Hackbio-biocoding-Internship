@@ -1,3 +1,9 @@
+# HackBio Internship - February 2025
+# Abby (GitHub: @AbbyOlawal)
+# Abby (GitHub: @AbbyOlawal) https://www.linkedin.com/in/abigael-edeh-b1a7a015a/
+# GitHub link to python repository for stage 1
+# https://github.com/AbbyOlawal/Hackbio-biocoding-Internship/commit/170fd8b91b043ad7310cc585672fdf5a1de72112
+#Definiing the genetic code for standard codon to amino acid mapping for collagen
 genetic_code = {
     'ATA': 'I', 'ATC': 'I', 'ATT': 'I', 'ATG': 'M',  # Methionine
     'ACA': 'T', 'ACC': 'T', 'ACG': 'T', 'ACT': 'T',
@@ -31,9 +37,7 @@ protein = translate_dna_to_protein(dna_sequence)
 print(f"Translated Protein Sequence: {protein}")
 
 
-
-
-
+# task two
 import numpy as np
 import matplotlib.pyplot as plt
 import random
@@ -81,7 +85,7 @@ plt.legend()
 plt.show() 
 
 
-
+#task three
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -138,7 +142,7 @@ plt.show()
 
 
 
-
+# task four
 import numpy as np
 import random
 def time_to_reach_80_percent_capacity_mosquito(initial_population, carrying_capacity, growth_rate, time_steps, max_lag_phase, max_exp_phase):
@@ -181,7 +185,7 @@ if time_to_80_percent is not None:
 else:
     print("Population did not reach 80% of the carrying capacity within the given time steps.")
 
-
+#task five
 def hamming_distance(str1, str2):
     max_length = max(len(str1), len(str2))
     str1 = str1.ljust(max_length, '*')
