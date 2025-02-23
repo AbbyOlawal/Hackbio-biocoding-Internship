@@ -1,1 +1,42 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
 
+# Task 1: Generate a volcano plot
+# Load dataset from the URL with space as the separator
+data_source = "https://gist.githubusercontent.com/stephenturner/806e31fce55a8b7175af/raw/1a507c4c3f9f1baaa3a69187223ff3d3050628d4/results.txt"
+df = pd.read_csv(data_source, sep=" ", engine="python")  # Use space separator and "python" engine to handle multiple spaces
+
+# Inspect actual column names (DEBUGGING STEP)
+print(df.columns)
+
+# Ensure column names are stripped of spaces
+df.columns = df.columns.str.strip()
+
+# Check if 'pvalue' exists, otherwise try 'padj'
+pval_col = 'pvalue' if 'pvalue' in df.columns else 'padj'  # Use adjusted p-value if needed
+
+# Compute -log10(p-value) for visualization
+df["-log10(p-value)"] = -np.log10(df[pval_col])
+
+# Define significance categories (p-value < 0.01)
+df["Significance"] = "Not Significant"
+df.loc[(df["log2FoldChange"] > 1) & (df[pval_col] < 0.01), "Significance"] = "Upregulated"
+df.loc[(df["log2FoldChange"] < -1) & (df[pval_col] < 0.01), "Significance"] = "Downregulated"
+
+# Set color mapping
+color_palette = {
+"Upregulated": "red",
+    "Downregulated": "blue",
+    "Not Significant": "gray"
+}
+
+# Create the scatter plot using Seaborn
+sns.scatterplot(
+    data=df,
+    x="log2FoldChange",
+    y="-log10(p-value)",
+    hue="Significance",
+    palette=color_palette,
+    alpha=0.75
+).set(title="Volcano Plot (p < 0.01)")
