@@ -18,37 +18,37 @@ https://drive.google.com/file/d/1OzWlZ8SO5DJhzhWRv-Kmzgb5CF8n0xk7/view?usp=drive
 import pandas as pd
 import numpy as np
 import seaborn as sns
+import matplotlib.pyplot as plt
+import requests
 
-# Task 1: Generate a volcano plot
 # Load dataset from the URL with space as the separator
 data_source = "https://gist.githubusercontent.com/stephenturner/806e31fce55a8b7175af/raw/1a507c4c3f9f1baaa3a69187223ff3d3050628d4/results.txt"
-df = pd.read_csv(data_source, sep=" ", engine="python")  # Use space separator and "python" engine to handle multiple spaces
+df = pd.read_csv(data_source, sep=" ", engine="python")
 
-# Inspect actual column names (DEBUGGING STEP)
-print(df.columns)
-
-# Ensure column names are stripped of spaces
+# Clean column names (strip spaces)
 df.columns = df.columns.str.strip()
 
-# Check if 'pvalue' exists, otherwise try 'padj'
-pval_col = 'pvalue' if 'pvalue' in df.columns else 'padj'  # Use adjusted p-value if needed
+# Identify the correct p-value column
+pval_col = 'pvalue' if 'pvalue' in df.columns else 'padj'
+
+# Remove rows with missing values in critical columns
+df = df[['log2FoldChange', pval_col]].dropna()
 
 # Compute -log10(p-value) for visualization
 df["-log10(p-value)"] = -np.log10(df[pval_col])
-
-# Define significance categories (p-value < 0.01)
+# Define significance categories
 df["Significance"] = "Not Significant"
 df.loc[(df["log2FoldChange"] > 1) & (df[pval_col] < 0.01), "Significance"] = "Upregulated"
 df.loc[(df["log2FoldChange"] < -1) & (df[pval_col] < 0.01), "Significance"] = "Downregulated"
 
 # Set color mapping
 color_palette = {
-"Upregulated": "red",
+    "Upregulated": "red",
     "Downregulated": "blue",
     "Not Significant": "gray"
 }
-
 # Create the scatter plot using Seaborn
+plt.figure(figsize=(8,6))
 sns.scatterplot(
     data=df,
     x="log2FoldChange",
@@ -56,67 +56,36 @@ sns.scatterplot(
     hue="Significance",
     palette=color_palette,
     alpha=0.75
-).set(title="Volcano Plot (p < 0.01)")
+)
+plt.title("Volcano Plot (p < 0.01)")
+plt.xlabel("log2 Fold Change")
+plt.ylabel("-log10(p-value)")
+plt.legend()
+plt.show()
 
+# Filter the upregulated and downregulated genes
+upregulated_genes = df[(df["log2FoldChange"] > 1) & (df[pval_col] < 0.01)]
+downregulated_genes = df[(df["log2FoldChange"] < -1) & (df[pval_col] < 0.01)]
+# Display the top 5 genes from each category
+print("Top 5 Upregulated Genes:")
+print(upregulated_genes.head())
+print("\nTop 5 Downregulated Genes:")
+print(downregulated_genes.head())
 
-# Task 2: Determine the upregulated genes (Genes with Log2FC > 1 and pvalue < 0.01)
+# List of example genes to query
+genes = ["EMILIN2", "POU3F4", "LOC285954", "VEPH1", "DTHD1", "TBX5", "IFITM1", "LAMA2", "CAV2", "TNN"]
 
-import pandas as pd
-# Load dataset from the URL with space as the separator
-data_source = "https://gist.githubusercontent.com/stephenturner/806e31fce55a8b7175af/raw/1a507c4c3f9f1baaa3a69187223ff3d3050628d4/results.txt"
-
-df = pd.read_csv(data_source, sep=" ", engine="python")
-# Clean column names (in case there are spaces)
-df.columns = df.columns.str.strip()
-# Filter the upregulated genes (Log2FC > 1 and p-value < 0.01)
-upregulated_genes = df[(df["log2FoldChange"] > 1) & (df["pvalue"] < 0.01)]
-# Display the upregulated genes
-print(upregulated_genes)
-
-# Task 3: Determine the downregulated genes (Genes with Log2FC < -1 and pvalue < 0.01)
-
-import pandas as pd
-
-# Load dataset from the URL with space as the separator
-data_source = "https://gist.githubusercontent.com/stephenturner/806e31fce55a8b7175af/raw/1a507c4c3f9f1baaa3a69187223ff3d3050628d4/results.txt"
-
-df = pd.read_csv(data_source, sep=" ", engine="python")
-# Clean column names (in case there are spaces)
-df.columns = df.columns.str.strip()
-# Filter the downregulated genes (Log2FC < -1 and p-value < 0.01)
-downregulated_genes = df[(df["log2FoldChange"] < -1) & (df["pvalue"] < 0.01)]
-# Display the downregulated genes
-print(downregulated_genes)
-
-# Task 4: Functions of the top 5 upregulated genes and top 5 downregulated genes
-import requests
-import pandas as pd
-
-# List of genes to query (upregulated and downregulated genes)
-genes = [
-    "EMILIN2", "POU3F4", "LOC285954", "VEPH1", "DTHD1",
-    "TBX5", "IFITM1", "LAMA2", "CAV2", "TNN"
-]
-
-# Function to get gene description from Ensembl API
 def get_gene_info(gene_name):
-    # Query the Ensembl REST API
     url = f"https://rest.ensembl.org/lookup/symbol/human/{gene_name}?content-type=application/json"
     response = requests.get(url)
-
+    
     if response.status_code == 200:
         gene_data = response.json()
-        # Extract the gene description (note that not all genes have descriptions)
-        description = gene_data.get("description", "Description not available")
-        return description
-    else:
-        return f"Error: {response.status_code}"
+        return gene_data.get("description", "Description not available")
+    return f"Error: {response.status_code}"
 
 # Retrieve gene information
 gene_info = {gene: get_gene_info(gene) for gene in genes}
 
-# Create a DataFrame for better presentation
 gene_df = pd.DataFrame(list(gene_info.items()), columns=["Gene", "Description"])
-
-# Display the DataFrame
 print(gene_df)
